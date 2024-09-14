@@ -13,7 +13,10 @@ def forward_batch(b_data,net):
     b_data = b_data.transpose([0, 4, 1, 2, 3])
     b_data = torch.from_numpy(b_data)   # b,c,t,h,w  # 40x3x16x224x224 
     with torch.no_grad():
-        b_data = b_data.cuda().float()
+        if torch.cuda.is_available():
+            b_data = b_data.cuda().float()
+        else:
+            b_data = b_data.cpu().float()
         b_features,_ = net(b_data,feature_layer=5)
     b_features = b_features[:,:,0,0,0]
     return b_features
@@ -97,6 +100,59 @@ def cv2show(video_path,score_list):
         if key == ord('q'):         
             cap.release()          
             break
+def cv2save(video_path, score_list, output_path):
+    frame_num = 1
+    cap = cv2.VideoCapture(video_path)
+    
+    if not cap.isOpened():
+        print("Error: Video capture failed to open.")
+        return
+    
+    # Get frame dimensions and FPS from the input video
+    frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    fps = cap.get(cv2.CAP_PROP_FPS)
+
+    # Define the codec and create a VideoWriter object for saving the output video
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # You can use other codecs if needed
+    out = cv2.VideoWriter(output_path, fourcc, fps, (224, 224))  # 224x224 size based on resizing in the original function
+
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            print("Finished reading the video.")
+            break
+
+        # Resize and crop the frame as per your original logic
+        frame = cv2.resize(frame, (340, 256))
+        frame = frame[16:240, 58:282, :]
+        
+        score = score_list[frame_num - 1]  # Get the score for the current frame
+
+        # Add the rectangle and text with frame number and score
+        left_x_up = 10
+        left_y_up = 10
+        right_x_down = int(left_x_up + 200)
+        right_y_down = int(left_y_up + 60)
+        word_x = left_x_up + 10
+        word_y = left_y_up + 20
+        cv2.rectangle(frame, (left_x_up, left_y_up), (right_x_down, right_y_down), (55, 255, 155), 2)
+        cv2.putText(frame, 'frame_num:{}'.format(frame_num), (word_x, word_y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (55, 255, 155), 1)
+
+        if score > 0.5:
+            cv2.putText(frame, 'frame_score:{:.2f}'.format(score), (word_x, word_y + 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 155), 1)
+        else:
+            cv2.putText(frame, 'frame_score:{:.2f}'.format(score), (word_x, word_y + 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (55, 255, 155), 1)
+        
+        # Write the processed frame into the output video
+        out.write(frame)
+
+        frame_num += 1
+
+    # Release resources
+    cap.release()
+    out.release()
+    print(f"Video saved successfully to {output_path}")
         
 
 if __name__=="__main__":
@@ -105,12 +161,17 @@ if __name__=="__main__":
     i3d = I3D(400, modality='rgb', dropout_prob=0, name='inception')
     i3d.eval()
     i3d.load_state_dict(torch.load("feature_extract/model_rgb.pth"))
-    i3d.cuda()
+    if torch.cuda.is_available():
+        i3d.cuda()
 
     ad_net = WSAD(input_size = 1024, flag = "Test", a_nums = 60, n_nums = 60)
-    ad_net.load_state_dict(torch.load("models/xd_trans_2022.pkl"))
-    ad_net.cuda()
-    input_dir = "data/2.mp4"
+    if torch.cuda.is_available():
+        ad_net.load_state_dict(torch.load("models/xd_trans_2022.pkl",map_location=torch.device('cuda')))
+    else:
+        ad_net.load_state_dict(torch.load("models/xd_trans_2022.pkl",map_location=torch.device('cpu')))
+    if torch.cuda.is_available():
+        ad_net.cuda()
+    input_dir = "feature_extract/Data/roadaccident/roadaccident.mp4"
     if os.path.isdir(input_dir):
         frames = load_video_dir(input_dir)
     else:
@@ -122,7 +183,10 @@ if __name__=="__main__":
         copy_img = [frames[frames_cnt-1]]*copy_length
         frames = frames+copy_img
     frame_indices, batch_num = batch_split(clipped_length, batch_size = batch_size, chunk_size = 16)
-    full_features = torch.zeros(0).cuda()
+    if torch.cuda.is_available():
+        full_features = torch.zeros(0).cuda()
+    else:
+        full_features = torch.zeros(0).cpu()
     for batch_id in tqdm(range(batch_num)):
         batch_data = np.zeros(frame_indices[batch_id].shape + (224,224,3))      
         for i in range(frame_indices[batch_id].shape[0]):
@@ -141,5 +205,6 @@ if __name__=="__main__":
     print("cost:{}".format(cost_time))
     print("fps:{}".format(frames_cnt/cost_time))
     cv2show(input_dir,scores)
+    cv2save(input_dir,scores,"feature_extract/Out/"+os.path.basename(input_dir))
     cv2.destroyAllWindows()
     
