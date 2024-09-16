@@ -1,6 +1,6 @@
 # Anomaly detection in surveillance videos using [UR-DMU](https://github.com/henrryzh1/UR-DMU.git)
 
-Added some demo codes and Grad Cam code too.
+Added some demo codes, and Grad Cam code too.
 
 - Videos are split into fixed-size lengths (16 frames). To understand the overall structure: if a video has 529 frames, it can be divided into 33 full 16-frame segments (529//16), and the last segment will be padded by repeating the last frame to form 16 frames. This creates 34 segments of (1, 3, 16, 224, 224), which are then passed through a pre-trained I3D model to extract features, resulting in (1, 34, 1024). These features are then processed by an anomaly score prediction model, yielding (1, 34) anomaly scores. Each score is repeated 16 times to cover the original 529 frames.
 
@@ -43,7 +43,7 @@ Added some demo codes and Grad Cam code too.
 
   ![gc_explosion](feature_extract/Out/gradcam_skip_frame_1/explosion.gif)![gci_explosion1](feature_extract/Out/gradcam_skip_frame_1/explosion1.png)![gci_explosion2](feature_extract/Out/gradcam_skip_frame_1/explosion2.png)![gci_explosion3](feature_extract/Out/gradcam_skip_frame_1/explosion3.png)
 
-- May be [Grad_cam_demo.py](Grad_cam_demo.py) not working on fight because it is not taking all segments (1, no. of segments, 1024) once. So, it is not doing any temporal calculation. Temporal calculation is making score competing to each other to output high value for anomaly segment. [Grp_gradcam_demo.py](Grp_gradcam_demo.py) working well in temporal calculation but not giving heatmap correctly (* may be it is implemented wrong).
+- May be [Grad_cam_demo.py](Grad_cam_demo.py) not working on fight because it is not taking all segments (1, no. of segments, 1024) once. So, it is not doing any temporal calculation. Temporal calculation is making scores comparative to each other to output high values for anomaly segments. [Grp_gradcam_demo.py](Grp_gradcam_demo.py) working well in temporal calculation but not giving heatmap correctly (* maybe it is implemented wrong).
 
   ![gc_fight](feature_extract/Out/gradcam_skip_frame_1/fight.gif)![gci_fight1](feature_extract/Out/gradcam_skip_frame_1/fight1.png)![gci_fight2](feature_extract/Out/gradcam_skip_frame_1/fight2.png)![gci_fight3](feature_extract/Out/gradcam_skip_frame_1/fight3.png)
 
