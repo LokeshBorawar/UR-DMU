@@ -1,6 +1,6 @@
 # Anomaly detection in surveillance videos using [UR-DMU](https://github.com/henrryzh1/UR-DMU.git)
 
-Added some demo codes.
+Added some demo codes and Grad Cam code too.
 
 - Videos are split into fixed-size lengths (16 frames). To understand the overall structure: if a video has 529 frames, it can be divided into 33 full 16-frame segments (529//16), and the last segment will be padded by repeating the last frame to form 16 frames. This creates 34 segments of (1, 3, 16, 224, 224), which are then passed through a pre-trained I3D model to extract features, resulting in (1, 34, 1024). These features are then processed by an anomaly score prediction model, yielding (1, 34) anomaly scores. Each score is repeated 16 times to cover the original 529 frames.
 
@@ -35,6 +35,19 @@ Added some demo codes.
   ![wo](feature_extract/Out/roadaccident.gif)
 
 - In detail, [i3d_extract](feature_extract/i3d_extract.py) takes frames but need to save all [video's](feature_extract/Data/roadaccident) [frames](feature_extract/UCF_Crime_Frames/roadaccident) using [video2frame_split](feature_extract/video2frame_split.py) and convert to segments with oversampling and save as [.npy](feature_extract/UCF_ten/roadaccident_i3d.npy). After that [UR_DMU_demo](UR_DMU_demo.py) can be used to predict anomaly score.
+
+- This [code](Grad_cam_demo.py) computes Grad-CAM (Gradient-weighted Class Activation Mapping) for video frames using an I3D model and an anomaly detection model. The video is divided into segments, each containing 16 frames, which are processed by the I3D model to extract features. These features are then passed to the anomaly model, which outputs anomaly scores for each frame. Gradients from the anomaly scores are back-propagated to the selected feature layer in the I3D model to generate the Grad-CAM heatmaps.
+- For each video segment, the input is a tensor of shape (1, 3, 16, 224, 224), representing a batch of one video segment with 16 frames, each resized to 224x224 pixels and having 3 color channels. The Grad-CAM heatmaps are computed for each temporal frame (1,10,1,1024) and are upsampled to match the frame size, then overlaid on the original video frames to visualize which regions are most important for the anomaly detection task. Please see all results in the [Out directory](feature_extract\Out)
+
+  ![gc_abuse](feature_extract/Out/gradcam_skip_frame_1/abuse.gif)![gci_abuse1](feature_extract/Out/gradcam_skip_frame_1/abuse1.png)![gci_abuse2](feature_extract/Out/gradcam_skip_frame_1/abuse2.png)![gci_abuse3](feature_extract/Out/gradcam_skip_frame_1/abuse3.png)
+
+  ![gc_explosion](feature_extract/Out/gradcam_skip_frame_1/explosion.gif)![gci_explosion1](feature_extract/Out/gradcam_skip_frame_1/explosion1.png)![gci_explosion2](feature_extract/Out/gradcam_skip_frame_1/aexplosion.png)![gci_explosion3](feature_extract/Out/gradcam_skip_frame_1/explosion3.png)
+
+- May be [Grad_cam_demo.py](Grad_cam_demo.py) not working on fight because it is not taking all segments (1, no. of segments, 1024) once. So, it is not doing any temporal calculation. Temporal calculation is making score competing to each other to output high value for anomaly segment. [Grp_gradcam_demo.py](Grp_gradcam_demo.py) working well in temporal calculation but not giving heatmap correctly (* may be it is implemented wrong).
+
+  ![gc_fight](feature_extract/Out/gradcam_skip_frame_1/fight.gif)![gci_fight1](feature_extract/Out/gradcam_skip_frame_1/afight1.png)![gci_fight2](feature_extract/Out/gradcam_skip_frame_1/fight2.png)![gci_fight3](feature_extract/Out/gradcam_skip_frame_1/fight3.png)
+
+  ![gc_roadaccident](feature_extract/Out/gradcam_skip_frame_1/roadaccident.gif)![gci_roadaccident1](feature_extract/Out/gradcam_skip_frame_1/roadaccident1.png)![gci_roadaccident2](feature_extract/Out/gradcam_skip_frame_1/roadaccident2.png)![gci_roadaccident3](feature_extract/Out/gradcam_skip_frame_1/roadaccident3.png)
 
 
 ## Contacts:
