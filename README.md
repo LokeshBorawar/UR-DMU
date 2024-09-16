@@ -41,21 +41,21 @@ Added some demo codes and Grad Cam code too.
 
   ![gc_abuse](feature_extract/Out/gradcam_skip_frame_1/abuse.gif)
   
-  ![gci_abuse1](feature_extract/Out/gradcam_skip_frame_1/abuse1.png)![gci_abuse2](feature_extract/Out/gradcam_skip_frame_1/abuse2.png)![gci_abuse3](feature_extract/Out/gradcam_skip_frame_1/abuse3.png)
+  |![gci_abuse1](feature_extract/Out/gradcam_skip_frame_1/abuse1.png)|![gci_abuse2](feature_extract/Out/gradcam_skip_frame_1/abuse2.png)|![gci_abuse3](feature_extract/Out/gradcam_skip_frame_1/abuse3.png)
 
   ![gc_explosion](feature_extract/Out/gradcam_skip_frame_1/explosion.gif)
   
-  ![gci_explosion1](feature_extract/Out/gradcam_skip_frame_1/explosion1.png)![gci_explosion2](feature_extract/Out/gradcam_skip_frame_1/aexplosion.png)![gci_explosion3](feature_extract/Out/gradcam_skip_frame_1/explosion3.png)
+  |![gci_explosion1](feature_extract/Out/gradcam_skip_frame_1/explosion1.png)|![gci_explosion2](feature_extract/Out/gradcam_skip_frame_1/aexplosion.png)|![gci_explosion3](feature_extract/Out/gradcam_skip_frame_1/explosion3.png)
 
 - May be [Grad_cam_demo.py](Grad_cam_demo.py) not working on fight because it is not taking all segments (1, no. of segments, 1024) once. So, it is not doing any temporal calculation. Temporal calculation is making score competing to each other to output high value for anomaly segment. [Grp_gradcam_demo.py](Grp_gradcam_demo.py) working well in temporal calculation but not giving heatmap correctly (* may be it is implemented wrong).
 
   ![gc_fight](feature_extract/Out/gradcam_skip_frame_1/fight.gif)
   
-  ![gci_fight1](feature_extract/Out/gradcam_skip_frame_1/afight1.png)![gci_fight2](feature_extract/Out/gradcam_skip_frame_1/fight2.png)![gci_fight3](feature_extract/Out/gradcam_skip_frame_1/fight3.png)
+  |![gci_fight1](feature_extract/Out/gradcam_skip_frame_1/afight1.png)|![gci_fight2](feature_extract/Out/gradcam_skip_frame_1/fight2.png)|![gci_fight3](feature_extract/Out/gradcam_skip_frame_1/fight3.png)|
 
   ![gc_roadaccident](feature_extract/Out/gradcam_skip_frame_1/roadaccident.gif)
   
-  ![gci_roadaccident1](feature_extract/Out/gradcam_skip_frame_1/roadaccident1.png)![gci_roadaccident2](feature_extract/Out/gradcam_skip_frame_1/roadaccident2.png)![gci_roadaccident3](feature_extract/Out/gradcam_skip_frame_1/roadaccident3.png)
+  |![gci_roadaccident1](feature_extract/Out/gradcam_skip_frame_1/roadaccident1.png)|![gci_roadaccident2](feature_extract/Out/gradcam_skip_frame_1/roadaccident2.png)|![gci_roadaccident3](feature_extract/Out/gradcam_skip_frame_1/roadaccident3.png)|
 
 
 ## Contacts:
