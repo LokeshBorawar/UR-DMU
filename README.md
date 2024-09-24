@@ -50,6 +50,10 @@ Added some demo codes, and Grad Cam code too.
   ![gc_roadaccident](feature_extract/Out/gradcam_skip_frame_1/roadaccident.gif)![gci_roadaccident1](feature_extract/Out/gradcam_skip_frame_1/roadaccident1.png)![gci_roadaccident2](feature_extract/Out/gradcam_skip_frame_1/roadaccident2.png)![gci_roadaccident3](feature_extract/Out/gradcam_skip_frame_1/roadaccident3.png)
 
 
+## Requirements:
+- Please check right version in [requirements.csv](requirements.csv)
+
+
 ## Contacts:
 - borawarlokesh26@gmail.com
 
